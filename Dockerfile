@@ -10,7 +10,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+ARG CI_SKIP_LINT=false
+RUN if [ "$CI_SKIP_LINT" = "true" ]; then npm run build -- --no-lint; else npm run build; fi
 
 # Stage 3: Production
 FROM node:20-alpine AS production
